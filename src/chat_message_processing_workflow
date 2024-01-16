@@ -1,0 +1,27 @@
+digraph "Chat Message Processing Workflow" {
+	graph [fontcolor="#2D3436" fontname="Sans-Serif" fontsize=15 label="Chat Message Processing Workflow" nodesep=0.60 pad=2.0 rankdir=LR ranksep=0.75 splines=ortho]
+	node [fixedsize=true fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 height=1.4 imagescale=true labelloc=b shape=box style=rounded width=1.4]
+	edge [color="#7B8894"]
+	"99448a76ab4242b9baa3eed41b4c3b48" [label=User height=1.9 image="/Users/rastoshi/workplace/whisper-consumer/venv/lib/python3.11/site-packages/resources/onprem/client/user.png" shape=none]
+	subgraph "cluster_Django Web Application" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="Django Web Application" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"95bf4f6487564d5f8e8868bdca5769e5" [label="Django Web Server" height=1.9 image="/Users/rastoshi/workplace/whisper-consumer/venv/lib/python3.11/site-packages/resources/onprem/compute/server.png" shape=none]
+	}
+	subgraph "cluster_Pulsar Cluster" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="Pulsar Cluster" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"31639c9dd19c48eab42dd93f339b655f" [label=new_chat_message_topic height=1.9 image="/Users/rastoshi/workplace/whisper-consumer/venv/lib/python3.11/site-packages/resources/onprem/queue/rabbitmq.png" shape=none]
+		d6bc42aff9c64fc9b299da217f9456ab [label=chat_message_transcribed height=1.9 image="/Users/rastoshi/workplace/whisper-consumer/venv/lib/python3.11/site-packages/resources/onprem/queue/rabbitmq.png" shape=none]
+	}
+	subgraph "cluster_Processing Jobs" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="Processing Jobs" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		c50abf4ff68f4e869b7b16a03513bb8a [label="Transcription Job" height=1.9 image="/Users/rastoshi/workplace/whisper-consumer/venv/lib/python3.11/site-packages/resources/aws/compute/elastic-container-service.png" shape=none]
+		"52b28c05826d4514bb6aa06bd623bcda" [label="Image Generation Job" height=1.9 image="/Users/rastoshi/workplace/whisper-consumer/venv/lib/python3.11/site-packages/resources/aws/compute/lambda.png" shape=none]
+	}
+	"99448a76ab4242b9baa3eed41b4c3b48" -> "95bf4f6487564d5f8e8868bdca5769e5" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"95bf4f6487564d5f8e8868bdca5769e5" -> "31639c9dd19c48eab42dd93f339b655f" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"31639c9dd19c48eab42dd93f339b655f" -> c50abf4ff68f4e869b7b16a03513bb8a [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	c50abf4ff68f4e869b7b16a03513bb8a -> "95bf4f6487564d5f8e8868bdca5769e5" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"95bf4f6487564d5f8e8868bdca5769e5" -> d6bc42aff9c64fc9b299da217f9456ab [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	d6bc42aff9c64fc9b299da217f9456ab -> "52b28c05826d4514bb6aa06bd623bcda" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"52b28c05826d4514bb6aa06bd623bcda" -> "95bf4f6487564d5f8e8868bdca5769e5" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+}

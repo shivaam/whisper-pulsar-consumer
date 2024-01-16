@@ -1,0 +1,26 @@
+{
+    "type": "record",
+    "name": "ChatMessage",
+    "fields": [
+        {
+            "name": "id",
+            "type": "string"
+        },
+        {
+            "name": "chat_id",
+            "type": "string"
+        },
+        {
+            "name": "audio_message_id",
+            "type": "string"
+        },
+        {
+            "name": "image_id",
+            "type": "string"
+        },
+        {
+            "name": "timestamp",
+            "type": "string"
+        }
+    ]
+}
