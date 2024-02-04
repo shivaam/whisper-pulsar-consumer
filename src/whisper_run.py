@@ -2,9 +2,10 @@ from faster_whisper import WhisperModel
 
 
 def get_transcription(file):
-    model_size = "small.en"
+    print("File name used for whisper transcription: ", file)
+    model_size = "large"
 
-    model = WhisperModel(model_size, device="cpu", compute_type="int8")
+    model = WhisperModel(model_size, device="cpu", compute_type="int8", download_root = '/tmp/whisper')
     segments, info = model.transcribe(file, beam_size=5, language="en", task='translate')
 
     print("Detected language '%s' with probability %f" % (info.language, info.language_probability))

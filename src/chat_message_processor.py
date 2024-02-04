@@ -1,12 +1,24 @@
 import requests
 from whisper_run import get_transcription
+from pathlib import Path
+from env_variables import BABBLEBOX_URL, API_TOKEN
+
+# Path of the current script
+script_path = Path(__file__).parent.resolve()
+
+# Path of a file in the same directory as the script
+file_path = script_path / 'somefile.txt'
+
 
 # URLs for the API endpoints
-api_url_chat = "http://127.0.0.1:8000/api/ChatMessage"
-api_url_audio = "http://127.0.0.1:8000/api/AudioFile"
+api_url_chat = f"${BABBLEBOX_URL}/api/ChatMessage"
+api_url_audio = f"${BABBLEBOX_URL}/api/AudioFile"
+headers = {
+    "Authorization": f"Token ${API_TOKEN}"
+}
 
 
-def get_transcription_using_whisper(audio_message_id):
+def update_transcription_using_whisper(audio_message_id):
     file_name = download_audio_file_from_audio_message_id(audio_message_id)
     transcription = get_transcription(file_name)
     update_transcriptions(transcription,  audio_message_id)
@@ -15,7 +27,7 @@ def get_transcription_using_whisper(audio_message_id):
 def update_transcriptions(transcription, audio_message_id):
     url = f"{api_url_audio}/{audio_message_id}/"
     data = {"transcription_en": transcription}
-    response = requests.patch(url, data=data)
+    response = requests.patch(url, data=data, headers=headers, verify=False)
     if response.status_code == 200:
         print("Transcription updated successfully.")
     else:
@@ -30,7 +42,8 @@ def download_audio_file_from_chat_message(chat_message_id):
 
 def download_audio_file_from_audio_message_id(audio_message_id):
     audio_file_link = get_audio_file_link(audio_message_id)
-    file_name = f"audio+{audio_message_id}.webm"
+
+    file_name = "/tmp/whisper/" + f"audio+{audio_message_id}.webm"
     download_file(audio_file_link, file_name)
     return file_name
 
@@ -38,7 +51,7 @@ def download_audio_file_from_audio_message_id(audio_message_id):
 # Function to get the audio message ID
 def get_audio_message_id(chat_message_id):
     url = f"{api_url_chat}/{chat_message_id}/"
-    response = requests.get(url)
+    response = requests.get(url, headers=headers, verify=False)
     if response.status_code == 200:
         data = response.json()
         # Assuming the first item in the list contains the required ID
@@ -53,8 +66,7 @@ def get_audio_file_link(audio_message_id):
     # Construct the URL with the audio message ID
     url = f"{api_url_audio}/{audio_message_id}/"
     print(url)
-    print("http://127.0.0.1:8000/api/AudioFile/b4856f71-be16-4fd0-8aae-dac684e30668/")
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     if response.status_code == 200:
         data = response.json()
         print(data)
@@ -66,7 +78,7 @@ def get_audio_file_link(audio_message_id):
 
 def download_file(url, file_name):
     # Send an HTTP GET request to the file URL
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
 
     # Check if the request was successful
     if response.status_code == 200:
@@ -79,3 +91,9 @@ def download_file(url, file_name):
         print(f"File downloaded successfully: {file_name}")
     else:
         print(f"Failed to download file. Status code: {response.status_code}")
+
+
+
+#
+# # Testing code here:
+# get_audio_file_link("720e05e9-953b-49a7-aa57-81bdbea94d14")
